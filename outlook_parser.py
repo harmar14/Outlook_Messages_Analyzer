@@ -4,13 +4,13 @@ import datetime
 import re
 
 def incoming_messages(date):
-    # Функция получения писем по заданной дате.
-    # Подключение к Outlook.
+    # Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РїРёСЃРµРј РїРѕ Р·Р°РґР°РЅРЅРѕР№ РґР°С‚Рµ.
+    # РџРѕРґРєР»СЋС‡РµРЅРёРµ Рє Outlook.
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
-    # Получение содержимого папки 'Входящие' в отсортированном по дате получения виде.
+    # РџРѕР»СѓС‡РµРЅРёРµ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ РїР°РїРєРё 'Р’С…РѕРґСЏС‰РёРµ' РІ РѕС‚СЃРѕСЂС‚РёСЂРѕРІР°РЅРЅРѕРј РїРѕ РґР°С‚Рµ РїРѕР»СѓС‡РµРЅРёСЏ РІРёРґРµ.
     messages = outlook.GetDefaultFolder(6).Items
     messages.Sort("[ReceivedTime]", False)
-    # Сбор писем за заданную дату.
+    # РЎР±РѕСЂ РїРёСЃРµРј Р·Р° Р·Р°РґР°РЅРЅСѓСЋ РґР°С‚Сѓ.
     msgList = []
     msg = messages.GetLast()
     while msg:
@@ -22,7 +22,7 @@ def incoming_messages(date):
     return msgList
 
 def print_msg_info(message):
-    # Функция выводит данные о письме: conversation, sender, subject.
+    # Р¤СѓРЅРєС†РёСЏ РІС‹РІРѕРґРёС‚ РґР°РЅРЅС‹Рµ Рѕ РїРёСЃСЊРјРµ: conversation, sender, subject.
     conversation = message.ConversationID
     sender = message.SenderName
     #if "-" in sender:
@@ -32,7 +32,7 @@ def print_msg_info(message):
     print(conversation, sender, subject)
 
 def create_folder(folderName):
-    # Функция создает папку для данных письма или чистит имеющуюся.
+    # Р¤СѓРЅРєС†РёСЏ СЃРѕР·РґР°РµС‚ РїР°РїРєСѓ РґР»СЏ РґР°РЅРЅС‹С… РїРёСЃСЊРјР° РёР»Рё С‡РёСЃС‚РёС‚ РёРјРµСЋС‰СѓСЋСЃСЏ.
     directory = './' + folderName
     if not os.path.exists(directory):
         os.mkdir(directory)
@@ -41,18 +41,18 @@ def create_folder(folderName):
     return directory
 
 def delete_files_in_folder(directory):
-    # Удаление объектов из директории.
+    # РЈРґР°Р»РµРЅРёРµ РѕР±СЉРµРєС‚РѕРІ РёР· РґРёСЂРµРєС‚РѕСЂРёРё.
     for fileName in os.listdir(directory):
         filePath = os.path.join(directory, fileName)
         try:
             if os.path.isfile(filePath):
                 os.remove(filePath)
         except Exception as e:
-            print(f'Ошибка при удалении файла {filePath}. {e}')
+            print(f'РћС€РёР±РєР° РїСЂРё СѓРґР°Р»РµРЅРёРё С„Р°Р№Р»Р° {filePath}. {e}')
 
 
 def getData(msgList, conversation, directory):
-    # Функция, которая получает текст выбранного письма.
+    # Р¤СѓРЅРєС†РёСЏ, РєРѕС‚РѕСЂР°СЏ РїРѕР»СѓС‡Р°РµС‚ С‚РµРєСЃС‚ РІС‹Р±СЂР°РЅРЅРѕРіРѕ РїРёСЃСЊРјР°.
     for msg in msgList:
         if (msg.ConversationID == conversation):
             file = open(directory + "/message.txt", "w")
@@ -61,18 +61,18 @@ def getData(msgList, conversation, directory):
             break
 
 def Main():
-    # Ввод даты, за которую требуется искать письма, и приведение ее формата.
-    print('Введите дату формата %d.%m.%Y')
+    # Р’РІРѕРґ РґР°С‚С‹, Р·Р° РєРѕС‚РѕСЂСѓСЋ С‚СЂРµР±СѓРµС‚СЃСЏ РёСЃРєР°С‚СЊ РїРёСЃСЊРјР°, Рё РїСЂРёРІРµРґРµРЅРёРµ РµРµ С„РѕСЂРјР°С‚Р°.
+    print('Р’РІРµРґРёС‚Рµ РґР°С‚Сѓ С„РѕСЂРјР°С‚Р° %d.%m.%Y')
     inputDate = datetime.datetime.strptime(input(), "%d.%m.%Y")
-    # Получение входящих писем по заданной дате.
+    # РџРѕР»СѓС‡РµРЅРёРµ РІС…РѕРґСЏС‰РёС… РїРёСЃРµРј РїРѕ Р·Р°РґР°РЅРЅРѕР№ РґР°С‚Рµ.
     msgList = incoming_messages(inputDate.date().strftime("%d-%m-%Y"))
     
-    # ПОЛЬЗОВАТЕЛЬ БУДЕТ ВЫБИРАТЬ ПИСЬМО ЧЕРЕЗ ИНТЕРФЕЙС, А ПОКА ВОЗЬМЕМ ОДНО ЛЮБОЕ    
+    # РџРћР›Р¬Р—РћР’РђРўР•Р›Р¬ Р‘РЈР”Р•Рў Р’Р«Р‘РР РђРўР¬ РџРРЎР¬РњРћ Р§Р•Р Р•Р— РРќРўР•Р Р¤Р•Р™РЎ, Рђ РџРћРљРђ Р’РћР—Р¬РњР•Рњ РћР”РќРћ Р›Р®Р‘РћР•    
     print_msg_info(msgList[1])
     
     specificID = msgList[1].ConversationID
     folderName = msgList[1].SenderName + ' - ' + msgList[1].Subject
-    # Создание папки и сохранение тела письма в файл внутри нее.
+    # РЎРѕР·РґР°РЅРёРµ РїР°РїРєРё Рё СЃРѕС…СЂР°РЅРµРЅРёРµ С‚РµР»Р° РїРёСЃСЊРјР° РІ С„Р°Р№Р» РІРЅСѓС‚СЂРё РЅРµРµ.
     getData(msgList, specificID, create_folder(folderName))
     
 Main()
