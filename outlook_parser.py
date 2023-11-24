@@ -51,7 +51,7 @@ def delete_files_in_folder(directory):
             print(f'Ошибка при удалении файла {filePath}. {e}')
 
 
-def getData(msgList, conversation, directory):
+def get_data(msgList, conversation, directory):
     # Функция, которая получает текст выбранного письма.
     for msg in msgList:
         if (msg.ConversationID == conversation):
@@ -73,7 +73,7 @@ def Main():
     specificID = msgList[1].ConversationID
     folderName = msgList[1].SenderName + ' - ' + msgList[1].Subject
     # Создание папки и сохранение тела письма в файл внутри нее.
-    getData(msgList, specificID, create_folder(folderName))
+    get_data(msgList, specificID, create_folder(folderName))
     
 Main()
 #24.11.2023
