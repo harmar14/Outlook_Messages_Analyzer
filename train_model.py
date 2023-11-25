@@ -6,13 +6,13 @@ import json
 PROJECTS_JSON = "./data/projects.json"
 
 def load_data(file):
-    # Функция получает данные из json-файла.
+    # Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡Р°РµС‚ РґР°РЅРЅС‹Рµ РёР· json-С„Р°Р№Р»Р°.
     with open(file, "r") as f:
         data = json.load(f)
     return data
 
 def generate_better_projects(file):
-    # Функция учитывает вариации написания названий проектов.
+    # Р¤СѓРЅРєС†РёСЏ СѓС‡РёС‚С‹РІР°РµС‚ РІР°СЂРёР°С†РёРё РЅР°РїРёСЃР°РЅРёСЏ РЅР°Р·РІР°РЅРёР№ РїСЂРѕРµРєС‚РѕРІ.
     data = load_data(file)
     new_projects = []
     for item in data:
@@ -22,7 +22,7 @@ def generate_better_projects(file):
     return new_projects
 
 def create_training_data(file, type):
-    # Функция подготовки данных для дообучения.
+    # Р¤СѓРЅРєС†РёСЏ РїРѕРґРіРѕС‚РѕРІРєРё РґР°РЅРЅС‹С… РґР»СЏ РґРѕРѕР±СѓС‡РµРЅРёСЏ.
     data = generate_better_projects(file)
     patterns = []
     for item in data:
@@ -31,7 +31,7 @@ def create_training_data(file, type):
     return patterns
 
 def generate_rules(patterns):
-    # Процедура добавляет правила в модель.
+    # РџСЂРѕС†РµРґСѓСЂР° РґРѕР±Р°РІР»СЏРµС‚ РїСЂР°РІРёР»Р° РІ РјРѕРґРµР»СЊ.
     nlp = Russian()
     ruler = nlp.add_pipe("entity_ruler")
     ruler.add_patterns(patterns)
@@ -47,9 +47,9 @@ def test_model(model, text):
 #patterns = create_training_data(PROJECTS_JSON, "PROJECT")
 #generate_rules(patterns)
 
-# Тест модели.
+# РўРµСЃС‚ РјРѕРґРµР»Рё.
 nlp = spacy.load("trained_model")
-with open("./Shishkina Ekaterina - День рождения Леры Пестовой/message.txt", "r") as f:
+with open("./message.txt", "r") as f:
     text = f.read()
 print(text)
 doc = nlp(text)
