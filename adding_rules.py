@@ -22,7 +22,7 @@ def generate_better_projects(file):
     return new_projects
 
 def create_training_data(file, type):
-    # Функция подготовки данных для дообучения.
+    # Функция подготовки данных для отправки в модель.
     data = generate_better_projects(file)
     patterns = []
     for item in data:
@@ -35,7 +35,7 @@ def generate_rules(patterns):
     nlp = Russian()
     ruler = nlp.add_pipe("entity_ruler")
     ruler.add_patterns(patterns)
-    nlp.to_disk("trained_model")
+    nlp.to_disk("model_with_rules")
     
 def test_model(model, text):
     doc = nlp(text)
@@ -48,10 +48,10 @@ def test_model(model, text):
 #generate_rules(patterns)
 
 # Тест модели.
-nlp = spacy.load("trained_model")
-with open("./message.txt", "r") as f:
+nlp = spacy.load("model_with_rules")
+with open("./folder_name/message.txt", "r") as f:
     text = f.read()
-print(text)
+#print(text)
 doc = nlp(text)
 for ent in doc.ents:
     print(ent.text, ent.label_)
