@@ -5,6 +5,8 @@ import json
 
 PROJECTS_JSON = "./data/projects.json"
 WEEKDAYS_JSON = "./data/weekdays.json"
+POSITIONS_JSON = "./data/positions.json"
+APPS_JSON = "./data/apps.json"
 
 def load_data(file):
     # Функция получает данные из json-файла.
@@ -13,7 +15,7 @@ def load_data(file):
     return data
 
 def generate_better_patterns(file):
-    # Функция учитывает вариации написания названий проектов.
+    # Функция учитывает вариации написания.
     data = load_data(file)
     new_patterns = []
     for item in data:
@@ -46,11 +48,11 @@ def test_model(model, text):
     return results
 
 projects_patterns = create_training_data(PROJECTS_JSON, "PROJECT")
-#print(projects_patterns)
 weekdays_patterns = create_training_data(WEEKDAYS_JSON, "WEEKDAY")
-#print(weekdays_patterns)
+positions_patterns = create_training_data(POSITIONS_JSON, "POSITION")
+apps_patterns = create_training_data(APPS_JSON, "APP")
 
-generate_rules([*projects_patterns, *weekdays_patterns])
+generate_rules([*projects_patterns, *weekdays_patterns, *positions_patterns, *apps_patterns])
 
 # Тест модели.
 nlp = spacy.load("model_with_rules")
