@@ -123,6 +123,7 @@ def prepare_result_data(text):
 
 TRAIN_DATA = []
 
+# 1-80 для train_data_set.json, 80-101 для dev_data_set.json.
 for i in range (80, 101):
     with open(f"./data/messages/{i}.txt", "r", encoding="utf-8") as f:
         text = f.read()
