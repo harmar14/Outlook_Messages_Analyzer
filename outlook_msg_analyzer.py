@@ -250,6 +250,7 @@ def getIncomingMessages(date):
     return msgList
 
 def getMessagesData(msgList):
+    msgDataList = []
     for msg in msgList:
         conversation = msg.ConversationID
         sender = msg.SenderName
