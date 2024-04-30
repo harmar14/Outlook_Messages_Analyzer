@@ -146,6 +146,7 @@ class AppWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
         
     def onDateSubmit(self):
+        global msgDataList
         # Процедура, заполняющая mailTable списком писем по заданной дате.
         self.mailTable.setRowCount(0)
         # Получение даты из поля dateEdit и приведение ее формата.
@@ -164,12 +165,11 @@ class AppWindow(object):
             error.setIcon(QtWidgets.QMessageBox.Warning)
             error.setStandardButtons(QtWidgets.QMessageBox.Ok)
             error.exec_()
-            
         if ( msgList is not None ):
             # Если msgList пуст, письма не найдены. Обработка исключения.
             if ( len(msgList) > 0 ):
                 msgDataList = []
-                msgDataList = getMessagesData(msgList)
+                getMessagesData(msgList)
                 # Вывод всех писем на интерфейс.
                 for msgData in msgDataList:
                     line = f"[{msgData[1]} - {msgData[2]}] {msgData[3]}"
@@ -188,6 +188,7 @@ class AppWindow(object):
                 error.exec_()
             
     def onLetterSubmit(self):
+        global msgDataList
         # Процедура берет письмо по номеру и ищет в нем сущности.
         self.resultTable.setRowCount(0)
         # Получение значения letterEdit (номера письма).
@@ -213,6 +214,7 @@ class AppWindow(object):
             error.exec_()
             
     def onSubmit(self):
+        global msgDataList
         # Процедура открывает выбранное письмо в блокноте.
         # Если письмо не выбрано, то ничего открыть невозможно - ошибка.
         if ( self.mailTable.rowCount() > 0 ):
@@ -251,14 +253,13 @@ def getIncomingMessages(date):
     return msgList
 
 def getMessagesData(msgList):
+    global msgDataList
     for msg in msgList:
         conversation = msg.ConversationID
         sender = msg.SenderName
         subject = msg.Subject
         body = msg.Body.replace('\n', '')
         msgDataList.append([conversation, sender, subject, body])
-        
-    return msgDataList
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
