@@ -168,6 +168,7 @@ class AppWindow(object):
         if ( msgList is not None ):
             # Если msgList пуст, письма не найдены. Обработка исключения.
             if ( len(msgList) > 0 ):
+                msgDataList = []
                 msgDataList = getMessagesData(msgList)
                 # Вывод всех писем на интерфейс.
                 for msgData in msgDataList:
@@ -250,7 +251,6 @@ def getIncomingMessages(date):
     return msgList
 
 def getMessagesData(msgList):
-    msgDataList = []
     for msg in msgList:
         conversation = msg.ConversationID
         sender = msg.SenderName
