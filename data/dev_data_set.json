@@ -1,2 +1,0 @@
-(this is just demonstration, real data is much bigger)
-[["Text is confidential", {"entities": [[48, 52, "PROJECT"], [417, 436, "POSITION"], [121, 131, "DATE"], [0, 5, "PER"], [402, 415, "PER"]]}], ["Text is confidential", {"entities": [[285, 297, "APP"], [229, 240, "DATE"]]}]]
