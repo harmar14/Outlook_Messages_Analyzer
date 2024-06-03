@@ -1,13 +1,15 @@
+# -*- coding: cp1251 -*-
+
 from PyQt5 import QtCore, QtGui, QtWidgets
 import win32com.client
 import datetime
-import os
 import sys
 import spacy
 import subprocess
 import tempfile
 
 msgDataList = []
+messages = []
 
 class AppWindow(object):
     def setupUI(self, MainWindow):
@@ -156,7 +158,7 @@ class AppWindow(object):
         # Получение входящих писем по заданной дате.
         msgList = None
         try:
-            msgList = getIncomingMessages(inputDateStr)
+            msgList = extractMessagesWithDate(inputDateStr)
         except:
             error = QtWidgets.QMessageBox()
             error.setWindowTitle("Ошибка")
@@ -173,6 +175,8 @@ class AppWindow(object):
                 # Вывод всех писем на интерфейс.
                 for msgData in msgDataList:
                     line = f"[{msgData[1]} - {msgData[2]}] {msgData[3]}"
+                    if ( msgData[4] == True ):
+                        line = "[ВАЖНО]" + line
                     rowCnt = self.mailTable.rowCount()
                     self.mailTable.insertRow(rowCnt)
                     self.mailTable.setItem(rowCnt, 0, QtWidgets.QTableWidgetItem(line))
@@ -196,7 +200,7 @@ class AppWindow(object):
         # По умолчанию letterEdit хранит 1. Если перед кликом письма не получались - вывод ошибки.
         if ( self.mailTable.rowCount() > 0 ):
             text = msgDataList[letterNum][3]
-            nlp = spacy.load("./data/model-best")
+            nlp = spacy.load("./accuracy_models/model-best")
             doc = nlp(text)
             for ent in doc.ents:
                 line = f"{ent.text} [{ent.label_}] ({ent.start_char}:{ent.end_char})"
@@ -234,13 +238,20 @@ class AppWindow(object):
             error.setStandardButtons(QtWidgets.QMessageBox.Ok)
             error.exec_()
         
-def getIncomingMessages(date):
-    # Функция получения писем по заданной дате.
+def getIncomingMessages():
+    global messages
     # Подключение к Outlook.
     outlook = win32com.client.Dispatch("Outlook.Application").GetNamespace("MAPI")
     # Получение содержимого папки 'Входящие' в отсортированном по дате получения виде.
     messages = outlook.GetDefaultFolder(6).Items
     messages.Sort("[ReceivedTime]", False)
+
+def extractMessagesWithDate(date):
+    # Функция получения писем по заданной дате.
+    global messages
+    today = datetime.date.today().strftime("%d-%m-%Y")
+    if ( len(messages) == 0 or date == today ):
+        getIncomingMessages()
     # Сбор писем за заданную дату.
     msgList = []
     msg = messages.GetLast()
@@ -248,8 +259,10 @@ def getIncomingMessages(date):
         recievedDate = msg.ReceivedTime.strftime("%d-%m-%Y")
         if date == recievedDate:
             msgList.append(msg)
+        if ( len(msgList) > 0 and date != recievedDate ):
+            break
         msg = messages.GetPrevious()
-    
+        
     return msgList
 
 def getMessagesData(msgList):
@@ -259,7 +272,13 @@ def getMessagesData(msgList):
         sender = msg.SenderName
         subject = msg.Subject
         body = msg.Body.replace('\n', '')
-        msgDataList.append([conversation, sender, subject, body])
+        nlp = spacy.load("./accuracy_models/model-best")
+        doc = nlp(body)
+        if ( doc.cats["positive"] > doc.cats["negative"] ):
+            urgency = True
+        else:
+            urgency = False
+        msgDataList.append([conversation, sender, subject, body, urgency])
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
